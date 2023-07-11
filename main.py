@@ -2,6 +2,18 @@ import cv2
 import sys
 from random import randint
 
+import serial
+
+# Configurações da porta serial
+porta_serial = 'COM3'  # Substitua pela porta serial correta
+velocidade_serial = 9600  # Substitua pela velocidade correta
+
+# Criação do objeto Serial
+arduino = serial.Serial(porta_serial, velocidade_serial)
+
+midX = 260
+midY = 150
+
 cap = cv2.VideoCapture(0)
 
 ok, frame = cap.read()
@@ -43,6 +55,19 @@ while cap.isOpened():
     cv2.imshow('MultiTracker', frame)
 
     print("\nX: ", x, "\nY: ", y)
+
+    if x < midX and y > midY:
+        dados = "1"
+        arduino.write(dados.encode())
+    elif x < midX and y < midY :
+        dados = "2"
+        arduino.write(dados.encode())
+    elif x > midX and y > midY :
+        dados = "3"
+        arduino.write(dados.encode())
+    elif x > midX and y < midY :
+        dados = "4"
+        arduino.write(dados.encode())
 
     if cv2.waitKey(1) & 0XFF == 27:
         break
